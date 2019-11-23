@@ -153,7 +153,7 @@ app.get("/hobbies/list", async function(req, res){
           res.status(200);
           res.send(resp.hobbies);
         } else {
-          collection.updateOne({_id: user_id}, {"$set": {hobbies:[]}})
+          collection.updateOne({_id: user_id}, {$set: {hobbies:[]}})
           res.status(200);
           res.send([]);
         }
@@ -163,10 +163,10 @@ app.get("/hobbies/list", async function(req, res){
 });
 
 app.post("/hobbies/edit", function (req, res) {
-  if (req.user && req.user.id) {
+  if (req.user && req.user.id && req.body) {
     let user_id = req.user.id;
-    let new_hobbies = req.body.new_hobbies;
-    collection.updateOne({_id: user_id}, new_hobbies, upsert:true)
+    let new_hobbies = req.body;
+    collection.updateOne({_id: user_id}, {$set: {hobbies: new_hobbies}}, {upsert:true})
     res.status(200);
   }
 });
@@ -185,7 +185,7 @@ app.get("/favourites/list", async function(req, res){
           res.send(resp.favourites);
         } else {
           let obj = {food:"", music:"", animal:"", tv_programme:"", radio_programme:"", book:"", place:""};
-          collection.updateOne({_id: user_id}, {"$set": {favourites:obj}})
+          collection.updateOne({_id: user_id}, {$set: {favourites:obj}})
           res.status(200);
           res.send(obj);
         }
@@ -198,7 +198,7 @@ app.post("/favourites/edit", function (req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
     let new_favourites = req.body.new_favourites;
-    collection.updateOne({_id: user_id}, new_favourites, upsert:true);
+    collection.updateOne({_id: user_id}, {$set: {favourites: new_favourites}}, {upsert:true});
   }
 });
 
