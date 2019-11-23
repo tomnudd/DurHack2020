@@ -19,8 +19,8 @@ const AUTH0_SECRET = process.env.AUTH0_SECRET;
 
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
-const CONNECTION_URL = "mongodb+srv://durhack:" + process.env.mongo + "@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority"
-const DB_NAME = "DHDM"
+const CONNECTION_URL = "mongodb+srv://durhack:" + process.env.mongo + "@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const DB_NAME = "DHDM";
 const OS_KEY = process.env.OS_KEY;
 
 MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
@@ -82,7 +82,7 @@ async function get_uprn(address) {
   if (address && typeof(address) == "string") {
     const response = await fetch("https://api.ordnancesurvey.co.uk/places/v1/addresses/find?query=" + address + "&key=" + OS_KEY);
     if (response && response.ok) {
-      data = await response.json()
+      data = await response.json();
       return(data.results[0].DPA.UPRN);
     }
   }
@@ -132,7 +132,7 @@ app.get("/user/data", async function(req, res) {
       if (err) {
         throw err;
       } else {
-        console.log(req);
+        res.status(200);
         res.send(resp);
       }
     })
@@ -150,9 +150,11 @@ app.get("/hobbies/list", async function(req, res){
         throw err;
       } else {
         if (resp.hobbies) {
+          res.status(200);
           res.send(resp.hobbies);
         } else {
           collection.updateOne({_id: user_id}, {"$set": {hobbies:[]}})
+          res.status(200);
           res.send([]);
         }
       }
@@ -165,6 +167,7 @@ app.post("/hobbies/edit", function (req, res) {
     let user_id = req.user.id;
     let new_hobbies = req.body.new_hobbies;
     collection.updateOne({_id: user_id}, new_hobbies, upsert:true)
+    res.status(200);
   }
 });
 
@@ -178,10 +181,12 @@ app.get("/favourites/list", async function(req, res){
         throw err;
       } else {
         if (resp.favourites) {
+          res.status(200);
           res.send(resp.favourites);
         } else {
           let obj = {food:"", music:"", animal:"", tv_programme:"", radio_programme:"", book:"", place:""};
           collection.updateOne({_id: user_id}, {"$set": {favourites:obj}})
+          res.status(200);
           res.send(obj);
         }
       }
@@ -208,6 +213,7 @@ app.get("/people/list", function(req, res) {
           res.send(resp.people);
         } else {
           collection.updateOne({_id: user_id}, {"$set": {people:[]}})
+          res.status(200);
           res.send([]);
         }
       }
