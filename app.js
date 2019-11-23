@@ -72,8 +72,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.set('views', __dirname + '/views');
-app.set('view engine', 'pug');
+app.set("views", __dirname + "/views");
+app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "/public")));
 
 // RETRIEVING UPRN
@@ -134,7 +134,6 @@ app.get("/user/data", async function(req, res) {
       } else {
         console.log(req);
         res.send(resp);
-
       }
     })
   }
@@ -143,63 +142,59 @@ app.get("/user/data", async function(req, res) {
 // 'ME' PAGE
 // hobbies
 app.get("/hobbies/list", async function(req, res){
-  let user_id = req.user.id;
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
 
-  // query the db to get all the favourites of a particular person
-  let list = ['hobby 1', 'hobby 2'];
-
-  let res_data = JSON.stringify(list);
-  res.setHeader('Content-Type', 'application/json');
-  res.send(res_data);
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        if (resp.hobbies) {
+          res.send(resp.hobbies);
+        } else {
+          collection.updateOne({_id: user_id}, {"$set": {hobbies:[]}})
+          res.send([]);
+        }
+      }
+    });
+  }
 });
 
-app.post('/hobbies/edit', function (req, resp) {
-  user_id = req.body.id;
-  new_favourites = req.body.new_favourites;
-  resp.setHeader('Content-Type', 'application/json');
-
-  try {
-    // update the db with the new favourites
-    resp.status(204).send();
-  } catch(error) {
-    console.log(error)
-    resp.status(500).send();
+app.post("/hobbies/edit", function (req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    let new_hobbies = req.body.new_hobbies;
+    collection.updateOne({_id: user_id}, new_hobbies, upsert:true)
   }
-
 });
 
 // favourites
 app.get("/favourites/list", async function(req, res){
-  let user_id = req.user.id;
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
 
-  collection.findOne({_id: user_id}, function(err, resp) {
-    if (err) {
-      throw err;
-    } else {
-      if (resp.favourites) {
-        res.send(resp.favourites);
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
       } else {
-        let obj = {food:"", music:"", animal:"", tv:"", radio:"", book:"", place:""};
-        collection.updateOne({_id: user_id}, {"$set": {favourites:obj}})
-        res.send(obj);
+        if (resp.favourites) {
+          res.send(resp.favourites);
+        } else {
+          let obj = {food:"", music:"", animal:"", tv_programme:"", radio_programme:"", book:"", place:""};
+          collection.updateOne({_id: user_id}, {"$set": {favourites:obj}})
+          res.send(obj);
+        }
       }
-    }
-  });
+    });
+  }
 });
 
-app.post('/favourites/edit', function (req, resp) {
-  user_id = req.body.id;
-  new_favourites = req.body.new_favourites
-  resp.setHeader('Content-Type', 'application/json');
-
-  try {
-      // update the db with the new favourites
-      resp.status(204).send();
-  } catch(error) {
-    console.log("error");
-    resp.status(500).send();
+app.post("/favourites/edit", function (req, resp) {
+  if (req.user && req.user.id) {
+    let user_id = req.body.id;
+    let new_favourites = req.body.new_favourites
+    collection.updateOne({_id: user_id}, new_favourites, upsert:true)
   }
-
 });
 
 
