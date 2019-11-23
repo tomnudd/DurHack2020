@@ -2,21 +2,45 @@
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="index.js"></script>
+
 <body>
 
-<h1>Welcome to our amazing DurHack project. Please enter your name!</h1>
+  <h1>Welcome to our amazing(ish) DurHack project!</h1>
 
-<div ng-app="myApp" ng-controller="myCtrl">
+  <div ng-app="myApp" ng-controller="myCtrl">
+    <div id="login" ng-show="visibilities.login">
+      <p>First Name: <input type="text" ng-model="firstName"><br>
+        Last Name: <input type="text" ng-model="lastName"><br>
+        <br>
+        Welcome, {{firstName + " " + lastName}}
+      </p>
+      <button ng-click="mainMenu()">Go</button>
+    </div>
 
-First Name: <input type="text" ng-model="firstName"><br>
-Last Name: <input type="text" ng-model="lastName"><br>
-<br>
-Welcome, {{firstName + " " + lastName}}
+    <div w3-test-directive></div>
 
-</div>
+    <div id="mainMenu" ng-show="visibilities.mainMenu">
+      <ul>
+        <li ng-click="myDay()">My day</li>
+        <li ng-click="myPeople()">My people</li>
+        <li ng-click="myMoney()">My money</li>
+      </ul>
+    </div>
 
+    <div id="myDay" ng-show="visibilities.myDay">
 
+    </div>
+
+    <div id="myPeople" ng-show="visibilities.myPeople">
+      
+    </div>
+
+    <div id="myMoney" ng-show="visibilities.myMoney">
+      
+    </div>
+
+  </div>
 
 </body>
-</html>
 
+</html>
