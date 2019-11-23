@@ -176,7 +176,13 @@ app.get("/favourites/list", async function(req, res){
     if (err) {
       throw err;
     } else {
-      res.send(resp.favourites);
+      if (resp.favourites) {
+        res.send(resp.favourites);
+      } else {
+        let obj = {food:"", music:"", animal:"", tv:"", radio:"", book:"", place:""};
+        collection.updateOne({_id: user_id}, {"$set": {favourites:obj}})
+        res.send(obj);
+      }
     }
   });
 });
