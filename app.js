@@ -134,7 +134,6 @@ app.get("/user/data", async function(req, res) {
       } else {
         console.log(req);
         res.send(resp);
-
       }
     })
   }
@@ -185,7 +184,7 @@ app.get("/favourites/list", async function(req, res){
       if (resp.favourites) {
         res.send(resp.favourites);
       } else {
-        let obj = {food:"", music:"", animal:"", tv:"", radio:"", book:"", place:""};
+        let obj = {food:"", music:"", animal:"", tv_programme:"", radio_programme:"", book:"", place:""};
         collection.updateOne({_id: user_id}, {"$set": {favourites:obj}})
         res.send(obj);
       }
