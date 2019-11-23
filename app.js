@@ -111,7 +111,7 @@ async function (req, res) {
 
 app.get("/bins/:address", async function(req, res) {
   uprn = await get_uprn(req.params.address);
-  console.log(uprn)
+  console.log(uprn);
   axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn).then((response) => {
       if (response.status === 200) {
         const html = response.data;
@@ -128,14 +128,21 @@ app.get("/bins/:address", async function(req, res) {
 
 app.get("/user/data", async function(req, res) {
   if (req.user && req.user.id) {
-
+    collection.findOne({_id: req.user.id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        console.log(req);
+        res.send(resp);
+      }
+    })
   }
 })
 
 // 'ME' PAGE
 // hobbies
 app.get("/hobbies/list/:id", async function(req, res){
-  user_id = req.params.id
+  let user_id = req.params.id;
 
   // query the db to get all the favourites of a particular person
   let list = ['hobby 1', 'hobby 2'];
@@ -147,12 +154,12 @@ app.get("/hobbies/list/:id", async function(req, res){
 
 app.post('/hobbies/edit', function (req, resp) {
   user_id = req.body.id;
-  new_favourites = req.body.new_favourites
+  new_favourites = req.body.new_favourites;
   resp.setHeader('Content-Type', 'application/json');
 
   try {
-      // update the db with the new favourites
-      resp.status(204).send();
+    // update the db with the new favourites
+    resp.status(204).send();
   } catch(error) {
     console.log(error)
     resp.status(500).send();
@@ -161,15 +168,15 @@ app.post('/hobbies/edit', function (req, resp) {
 });
 
 // favourites
-app.get("/favourites/list/:id", async function(req, res){
-  user_id = req.params.id
-
+app.get("/favourites/list", async function(req, res){
+  let user_id = req.user.id;
+  console.log(user_id);
   // query the db to get all the favourites of a particular person
   let list = ['something', 'something else'];
 
   let resp_data = JSON.stringify(list);
-  resp.setHeader('Content-Type', 'application/json');
-  resp.send(resp_data);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(resp_data);
 });
 
 app.post('/favourites/edit', function (req, resp) {
