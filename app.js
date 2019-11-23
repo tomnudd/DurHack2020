@@ -18,7 +18,7 @@ const strategy = new Auth0Strategy({
   domain: AUTH0_DOMAIN,
   clientID: AUTH0_ID,
   clientSecret: AUTH0_SECRET,
-  callbackURL: "https://localhost:8090/callback"
+  callbackURL: "http://127.0.0.1:8090/callback"
 }, function (accessToken, refreshToken, extraParams, profile, done) {
     return done(null, profile);
   }
@@ -57,47 +57,9 @@ async function uprn(postcode) {
   }
 }
 
-app.get("/login", passport.authenticate("auth0", {
-  scope: "openid email profile"
-}), function(req, res) {
-  res.redirect("/");
-});
-
-app.get("/callback", function(req, res, next) {
-  passport.authenticate("auth0", function(err, user, info) {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.redirect("/login");
-    }
-    req.logIn(user, function(err) {
-      if (err) {
-        return next(err);
-      }
-      res.redirect("/" || "/user");
-    })
-  })
-});
-
-app.get("/logout", (req, res) => {
-  req.logout();
-  let returnTo = req.protocol + "://" + req.hostname;
-  const port = req.connection.localPort;
-  if (port !== undefined && port !== 80 && port !== 443) {
-    returnTo += ":" + port;
-  }
-  const logoutURL = new url.URL(
-    util.format("https://%s/v2/logout", AUTH0_DOMAIN)
-  );
-  let searchString = querystring.stringify({
-    client_id: AUTH0_ID,
-    returnTo: returnTo
-  });
-  logoutURL.search = searchString;
-
-  res.redirect(logoutURL);
-});
+app.get("/", function(req, res) {
+  res.send("Hi");
+})
 
 app.get("/user", function(req, res, next) {
   if (req.user) {
@@ -105,4 +67,5 @@ app.get("/user", function(req, res, next) {
     res.send("");
   }
 })
+
 module.exports = app;
