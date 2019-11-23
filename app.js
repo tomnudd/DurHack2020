@@ -35,17 +35,17 @@ async function get_uprn(address) {
 
 // web scraping time!
 
-app.get("/test", function(req,res) {
-  return "uwu"
-});
-
-// e.g. address can be 30 Young Street DH1 2JU (including spaces)
 app.get("/bins/:address", async function(req, res) {
+  uprn = await get_uprn(req.params.address);
   axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn) .then((response) => {
       if(response.status === 200) {
       const html = response.data;
-      const $ = cheerio.load(html);
+      let $ = cheerio.load(html);
       let page = $("#page_PageContentHolder_template_pnlArticleBody").html();
+      $ = cheerio.load(page);
+      let rubbish_date = $("p:nth-of-type(2)").html();
+      let recycling_date = $("p:nth-of-type(3)").html();
+      return ([rubbish_date, recycling_date]);
   }
   }, (error) => console.log(err) );
 });
