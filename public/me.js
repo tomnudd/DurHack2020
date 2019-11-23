@@ -67,7 +67,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             editHobbies.innerText = 'Edit';
 
-            document.getElementById("hobbies-txt").innerHTML = "<ul>" + text + "</ul>";
+            document.getElementById("hobbies-txt").innerHTML = "<ul>"
+            for (i in dataToSend){
+                document.getElementById("hobbies-txt").innerHTML += '<li>' + dataToSend[i] + '</li>';
+            }
+            document.getElementById("hobbies-txt").innerHTML += "</ul>";
         } else {
             // go into edit mode
             console.log('going into edit mode');
