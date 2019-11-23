@@ -145,12 +145,18 @@ app.get("/user/data", async function(req, res) {
 app.get("/hobbies/list", async function(req, res){
   let user_id = req.user.id;
 
-  // query the db to get all the favourites of a particular person
-  let list = ['hobby 1', 'hobby 2'];
-
-  let resp_data = JSON.stringify(list);
-  resp.setHeader('Content-Type', 'application/json');
-  resp.send(resp_data);
+  collection.findOne({_id: user_id}, function(err, resp) {
+    if (err) {
+      throw err;
+    } else {
+      if (resp.hobbies) {
+        res.send(resp.hobbies);
+      } else {
+        collection.updateOne({_id: user_id}, {"$set": {hobbies:[]}})
+        res.send([]);
+      }
+    }
+  });
 });
 
 app.post('/hobbies/edit', function (req, resp) {
