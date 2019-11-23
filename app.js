@@ -57,15 +57,24 @@ async function uprn(postcode) {
   }
 }
 
-app.get("/", function(req, res) {
-  res.send("Hi");
-})
-
-app.get("/user", function(req, res, next) {
+app.get("/", (req, res) => {
   if (req.user) {
-    // send user profile info
-    res.send("");
+    console.log(req.user);
   }
-})
+  res.send("hi");
+});
+
+app.get("/login", passport.authenticate("auth0", {
+  scope: "openid email profile"
+}), function(req, res) {
+  res.redirect("/");
+});
+
+app.get("/callback", passport.authenticate("auth0", {
+	failureRedirect: "/whoops"
+}),
+async function (req, res) {
+	res.redirect("/");
+});
 
 module.exports = app;
