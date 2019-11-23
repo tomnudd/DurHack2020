@@ -1,0 +1,1 @@
+let response = fetch("/bins/30+Young+Street+DH1+2JU");
