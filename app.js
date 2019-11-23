@@ -8,6 +8,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const bodyParser = require("body-parser");
+const path = require("path");
 require("dotenv").config();
 
 const passport = require("passport");
@@ -88,7 +89,7 @@ app.get("/", (req, res) => {
   if (req.user) {
     //console.log(req.user);
   }
-  res.send("hi");
+  res.sendFile(path.join(__dirname+'/index.html'));
 });
 
 app.get("/login", passport.authenticate("auth0", {
