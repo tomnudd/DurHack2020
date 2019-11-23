@@ -111,7 +111,7 @@ async function (req, res) {
 
 app.get("/bins/:address", async function(req, res) {
   uprn = await get_uprn(req.params.address);
-  console.log(uprn)
+  console.log(uprn);
   axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn).then((response) => {
       if (response.status === 200) {
         const html = response.data;
@@ -128,7 +128,14 @@ app.get("/bins/:address", async function(req, res) {
 
 app.get("/user/data", async function(req, res) {
   if (req.user && req.user.id) {
-
+    collection.findOne({_id: req.user.id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        console.log(req);
+        res.send(resp);
+      }
+    })
   }
 })
 
