@@ -135,8 +135,8 @@ app.get("/user/data", async function(req, res) {
 // 'ME' PAGE
 // hobbies
 app.get("/hobbies/list/:id", async function(req, res){
-  user_id = req.params.id
-
+  user_id = req.user.id;
+  console.log(user_id);
   console.log(req);
 
   // query the db to get all the favourites of a particular person
@@ -148,16 +148,16 @@ app.get("/hobbies/list/:id", async function(req, res){
 });
 
 app.post('/hobbies/edit', function (req, res) {
-  user_id = req.body.id;
+  user_id = req.user.id;
   new_favourites = req.body.new_favourites
   res.setHeader('Content-Type', 'application/json');
 
   try {
       // update the db with the new favourites
-      resp.status(204).send();
+      res.status(204).send();
   } catch(error) {
     console.log(error)
-    resp.status(500).send();
+    res.status(500).send();
   }
 
 });
@@ -170,22 +170,22 @@ app.get("/favourites/list", async function(req, res){
   // query the db to get all the favourites of a particular person
   let list = ['something', 'something else'];
 
-  let resp_data = JSON.stringify(list);
+  let res_data = JSON.stringify(list);
   res.setHeader('Content-Type', 'application/json');
-  res.send(resp_data);
+  res.send(res_data);
 });
 
 app.post('/favourites/edit', function (req, res) {
-  user_id = req.body.id;
+  user_id = req.user.id;
   new_favourites = req.body.new_favourites
-  resp.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/json');
 
   try {
       // update the db with the new favourites
-      resp.status(204).send();
+      res.status(204).send();
   } catch(error) {
     console.log("error");
-    resp.status(500).send();
+    res.status(500).send();
   }
 
 });
