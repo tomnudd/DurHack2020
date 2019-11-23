@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-const bodyParser = require("appbody-parser");
+const bodyParser = require("body-parser");
 
 const passport = require("passport");
 
@@ -28,7 +28,6 @@ async function get_uprn(address) {
     const response = await fetch("https://api.ordnancesurvey.co.uk/places/v1/addresses/find?query=" + address + "&key=" + OS_KEY);
     if (response && response.ok) {
       data = await response.json()
-      console.log(data.results[0].DPA.UPRN)
       return(data.results[0].DPA.UPRN);
     }
   }
@@ -40,14 +39,13 @@ app.get("/test", function(req,res) {
   return "uwu"
 });
 
-app.get("/bins/:address", function(req, res) {
-  urpn = get_urpn(req.params.address);
+// e.g. address can be 30 Young Street DH1 2JU (including spaces)
+app.get("/bins/:address", async function(req, res) {
   axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn) .then((response) => {
       if(response.status === 200) {
       const html = response.data;
       const $ = cheerio.load(html);
       let page = $("#page_PageContentHolder_template_pnlArticleBody").html();
-      console.log(page);
   }
   }, (error) => console.log(err) );
 });
