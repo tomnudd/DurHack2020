@@ -24,16 +24,31 @@ app.controller('myCtrl', function($scope) {
 
     $scope.myDay = function(){
       $scope.visibilities.mainMenu = false;
+      $scope.visibilities.myPeople = false;
+      $scope.visibilities.myMoney = false;
+
       $scope.visibilities.myDay = true;
     };
 
     $scope.myPeople = function(){
       $scope.visibilities.mainMenu = false;
+      $scope.visibilities.myDay = false;
+      $scope.visibilities.myMoney = false;
+
       $scope.visibilities.myPeople = true;
     };
 
     $scope.myMoney = function(){
       $scope.visibilities.mainMenu = false;
+      $scope.visibilities.myDay = false;
+      $scope.visibilities.myPeople = false;
+
       $scope.visibilities.myMoney = true;
     };
+});
+
+app.directive("banner", function() {
+  return {
+    templateUrl : "banner.html"
+  };
 });
