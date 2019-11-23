@@ -215,4 +215,12 @@ app.get("/people/list", function(req, res) {
   }
 });
 
+app.get("/people/add", function(req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    let new_person = req.body.person;
+    collection.updateOne({_id: user_id}, {"$push": {people: new_person}})
+  }
+});
+
 module.exports = app;
