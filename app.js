@@ -37,8 +37,8 @@ const strategy = new Auth0Strategy({
   clientID: AUTH0_ID,
   clientSecret: AUTH0_SECRET,
   callbackURL: "http://127.0.0.1:8090/callback"
-}, function (accessToken, refreshToken, extraParams, profile, done) {
-  collection.findOne({_id: profile.id}, function(err, res) {
+}, async function (accessToken, refreshToken, extraParams, profile, done) {
+  await collection.findOne({_id: profile.id}, function(err, res) {
     if (err) {
       console.log(err);
     } else {
@@ -134,6 +134,7 @@ app.get("/user/data", async function(req, res) {
       } else {
         console.log(req);
         res.send(resp);
+
       }
     })
   }
@@ -141,30 +142,28 @@ app.get("/user/data", async function(req, res) {
 
 // 'ME' PAGE
 // hobbies
-app.get("/hobbies/list/:id", async function(req, res){
-  user_id = req.user.id;
-  console.log(user_id);
-  console.log(req);
+app.get("/hobbies/list", async function(req, res){
+  let user_id = req.user.id;
 
   // query the db to get all the favourites of a particular person
   let list = ['hobby 1', 'hobby 2'];
 
-  let res_data = JSON.stringify(list);
-  res.setHeader('Content-Type', 'application/json');
-  res.send(res_data);
+  let resp_data = JSON.stringify(list);
+  resp.setHeader('Content-Type', 'application/json');
+  resp.send(resp_data);
 });
 
-app.post('/hobbies/edit', function (req, res) {
-  user_id = req.user.id;
-  new_favourites = req.body.new_favourites
-  res.setHeader('Content-Type', 'application/json');
+app.post('/hobbies/edit', function (req, resp) {
+  user_id = req.body.id;
+  new_favourites = req.body.new_favourites;
+  resp.setHeader('Content-Type', 'application/json');
 
   try {
-      // update the db with the new favourites
-      res.status(204).send();
+    // update the db with the new favourites
+    resp.status(204).send();
   } catch(error) {
     console.log(error)
-    res.status(500).send();
+    resp.status(500).send();
   }
 
 });
@@ -172,27 +171,27 @@ app.post('/hobbies/edit', function (req, res) {
 // favourites
 app.get("/favourites/list", async function(req, res){
   let user_id = req.user.id;
-  console.log(user_id);
 
-  // query the db to get all the favourites of a particular person
-  let list = ['something', 'something else'];
-
-  let res_data = JSON.stringify(list);
-  res.setHeader('Content-Type', 'application/json');
-  res.send(res_data);
+  collection.findOne({_id: user_id}, function(err, resp) {
+    if (err) {
+      throw err;
+    } else {
+      res.send(resp.favourites);
+    }
+  });
 });
 
-app.post('/favourites/edit', function (req, res) {
-  user_id = req.user.id;
+app.post('/favourites/edit', function (req, resp) {
+  user_id = req.body.id;
   new_favourites = req.body.new_favourites
-  res.setHeader('Content-Type', 'application/json');
+  resp.setHeader('Content-Type', 'application/json');
 
   try {
       // update the db with the new favourites
-      res.status(204).send();
+      resp.status(204).send();
   } catch(error) {
     console.log("error");
-    res.status(500).send();
+    resp.status(500).send();
   }
 
 });
