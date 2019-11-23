@@ -8,18 +8,19 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
 
 const passport = require("passport");
 const Auth0Strategy = require("passport-auth0");
-const AUTH0_DOMAIN = "dev-92nn7edb.auth0.com";
-const AUTH0_ID = "YfRZS0bxC4kFrPMFsFFnim0AP1L4If4V";
-const AUTH0_SECRET = "kxBC2xsABE3vnAnqPRlRmcreiLdLc--Fe8Q8Pv2K3msXl1BiBGH51NAZfqVoGp-0";
+const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN;
+const AUTH0_ID = process.env.AUTH0_ID;
+const AUTH0_SECRET = process.env.AUTH0_SECRET;
 
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
-const CONNECTION_URL = "mongodb+srv://durhack:Yeet%2A420%25@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority"
+const CONNECTION_URL = process.env.CONNECTION_URL;
 const DB_NAME = "DHDM"
-const OS_KEY = "hkABo11OhSUjmTRvKi2AysevY8n2LmI7";
+const OS_KEY = process.env.OS_KEY;
 
 MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
   if (err) {
@@ -115,10 +116,17 @@ app.get("/bins/:address", async function(req, res) {
         $ = cheerio.load(page);
         let rubbish_date = $("p:nth-of-type(2)").html();
         let recycling_date = $("p:nth-of-type(3)").html();
+        console.log([rubbish_date, recycling_date])
         return ([rubbish_date, recycling_date]);
       }
   }, (error) => console.log(err) );
 });
+
+app.get("/user/data", async function(req, res) {
+  if (req.user && req.user.id) {
+
+  }
+})
 
 
 module.exports = app;
