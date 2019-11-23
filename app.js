@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const session = require("express-session");
 const fetch = require("node-fetch");
+const querystring = require("querystring");
 
 const bodyParser = require("body-parser");
 
@@ -17,11 +18,20 @@ const strategy = new Auth0Strategy({
   domain: AUTH0_DOMAIN,
   clientID: AUTH0_ID,
   clientSecret: AUTH0_SECRET,
-  callback: "https://localhost:8090/callback"},
-  function (accessToken, refreshToken, extraParams, profile, done) {
+  callbackURL: "https://localhost:8090/callback"
+}, function (accessToken, refreshToken, extraParams, profile, done) {
     return done(null, profile);
   }
-})
+)
+
+passport.use(strategy);
+passport.serializeUser(function (user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+  done(null, user);
+});
 
 app.use(session({
   name: "DurHack2019",
@@ -30,6 +40,8 @@ app.use(session({
   saveUninitialized: true
 }))
 
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -44,5 +56,47 @@ async function uprn(postcode) {
     }
   }
 }
+
+app.get("/login", passport.authenticate("auth0", {
+  scope: "openid email profile"
+}), function(req, res) {
+  res.redirect("/");
+});
+
+app.get("/callback", function(req, res, next) {
+  passport.authenticate("auth0", function(err, user, info) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect("/login");
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect("/" || "/user");
+    })
+  })
+});
+
+app.get("/logout", (req, res) => {
+  req.logout();
+  let returnTo = req.protocol + "://" + req.hostname;
+  const port = req.connection.localPort;
+  if (port !== undefined && port !== 80 && port !== 443) {
+    returnTo += ":" + port;
+  }
+  const logoutURL = new url.URL(
+    util.format("https://%s/v2/logout", AUTH0_DOMAIN)
+  );
+  let searchString = querystring.stringify({
+    client_id: AUTH0_ID,
+    returnTo: returnTo
+  });
+  logoutURL.search = searchString;
+
+  res.redirect(logoutURL);
+});
 
 module.exports = app;
