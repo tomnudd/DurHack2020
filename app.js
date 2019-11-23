@@ -128,5 +128,59 @@ app.get("/user/data", async function(req, res) {
   }
 })
 
+// 'ME' PAGE
+// hobbies
+app.get("/hobbies/list/:id", async function(req, res){
+  user_id = req.params.id
+
+  // query the db to get all the favourites of a particular person
+  let list = ['hobby 1', 'hobby 2'];
+
+  let resp_data = JSON.stringify(list);
+  resp.setHeader('Content-Type', 'application/json');
+  resp.send(resp_data);
+});
+
+app.post('/hobbies/edit', function (req, resp) {
+  user_id = req.body.id;
+  new_favourites = req.body.new_favourites
+  resp.setHeader('Content-Type', 'application/json');
+
+  try {
+      // update the db with the new favourites
+      resp.status(204).send();
+  } catch {
+    resp.status(500).send();
+  }
+
+});
+
+// favourites
+app.get("/favourites/list/:id", async function(req, res){
+  user_id = req.params.id
+
+  // query the db to get all the favourites of a particular person
+  let list = ['something', 'something else'];
+
+  let resp_data = JSON.stringify(list);
+  resp.setHeader('Content-Type', 'application/json');
+  resp.send(resp_data);
+});
+
+app.post('/favourites/edit', function (req, resp) {
+  user_id = req.body.id;
+  new_favourites = req.body.new_favourites
+  resp.setHeader('Content-Type', 'application/json');
+
+  try {
+      // update the db with the new favourites
+      resp.status(204).send();
+  } catch {
+    resp.status(500).send();
+  }
+
+});
+
+
 
 module.exports = app;
