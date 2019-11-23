@@ -1,0 +1,26 @@
+{
+  "name": "durhack",
+  "version": "1.0.0",
+  "description": "We've already won.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomnudd/DurHack.git"
+  },
+  "author": "tomnudd",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomnudd/DurHack/issues"
+  },
+  "homepage": "https://github.com/tomnudd/DurHack#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "node-fetch": "^2.6.0",
+    "passport": "^0.4.0"
+  }
+}
