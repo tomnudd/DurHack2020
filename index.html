@@ -3,6 +3,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="index.js"></script>
 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="cursed.css">
+
+
 <body>
 
   <h1>Welcome to our amazing(ish) DurHack project!</h1>
@@ -20,23 +24,24 @@
     <div w3-test-directive></div>
 
     <div id="mainMenu" ng-show="visibilities.mainMenu">
-      <ul>
-        <li ng-click="myDay()">My day</li>
-        <li ng-click="myPeople()">My people</li>
-        <li ng-click="myMoney()">My money</li>
-      </ul>
+        <p class="big_button" style="background-color:mediumaquamarine" ng-click="myDay()">My day</p>
+        <p class="big_button" style="background-color:dodgerblue" ng-click="myPeople()">My people</p>
+        <p class="big_button" style="background-color:slateblue" ng-click="myMoney()">My money</p>
     </div>
 
     <div id="myDay" ng-show="visibilities.myDay">
-
+      <banner></banner>
+      day
     </div>
 
     <div id="myPeople" ng-show="visibilities.myPeople">
-      
+      <banner></banner>
+      people
     </div>
 
     <div id="myMoney" ng-show="visibilities.myMoney">
-      
+      <banner></banner>
+      money
     </div>
 
   </div>
