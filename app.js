@@ -89,7 +89,7 @@ app.get("/", (req, res) => {
   if (req.user) {
     //console.log(req.user);
   }
-  res.sendFile(path.join(__dirname+'/index.html'));
+  res.render("index.html");
 });
 
 app.get("/login", passport.authenticate("auth0", {
@@ -150,7 +150,8 @@ app.post('/hobbies/edit', function (req, resp) {
   try {
       // update the db with the new favourites
       resp.status(204).send();
-  } catch {
+  } catch(error) {
+    console.log(error)
     resp.status(500).send();
   }
 
@@ -176,7 +177,8 @@ app.post('/favourites/edit', function (req, resp) {
   try {
       // update the db with the new favourites
       resp.status(204).send();
-  } catch {
+  } catch(error) {
+    console.log("error");
     resp.status(500).send();
   }
 
