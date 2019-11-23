@@ -189,14 +189,30 @@ app.get("/favourites/list", async function(req, res){
   }
 });
 
-app.post("/favourites/edit", function (req, resp) {
+app.post("/favourites/edit", function (req, res) {
   if (req.user && req.user.id) {
-    let user_id = req.body.id;
-    let new_favourites = req.body.new_favourites
-    collection.updateOne({_id: user_id}, new_favourites, upsert:true)
+    let user_id = req.user.id;
+    let new_favourites = req.body.new_favourites;
+    collection.updateOne({_id: user_id}, new_favourites, upsert:true);
   }
 });
 
-
+app.get("/people/list", function(req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        if (resp.people) {
+          res.send(resp.people);
+        } else {
+          collection.updateOne({_id: user_id}, {"$set": {people:[]}})
+          res.send([]);
+        }
+      }
+    });
+  }
+});
 
 module.exports = app;
