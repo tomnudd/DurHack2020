@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const session = require("express-session");
+
 const fetch = require("node-fetch");
 const querystring = require("querystring");
 
@@ -12,6 +13,10 @@ const AUTH0_DOMAIN = "dev-92nn7edb.auth0.com";
 const AUTH0_ID = "YfRZS0bxC4kFrPMFsFFnim0AP1L4If4V";
 const AUTH0_SECRET = "kxBC2xsABE3vnAnqPRlRmcreiLdLc--Fe8Q8Pv2K3msXl1BiBGH51NAZfqVoGp-0";
 
+const mongodb = require("mongodb");
+const MongoClient = mongodb.MongoClient;
+const CONNECTION_URL = "mongodb+srv://durhack:Yeet%2A420%25@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority"
+const DB_NAME = "DHDM"
 const OS_KEY = "hkABo11OhSUjmTRvKi2AysevY8n2LmI7";
 
 const strategy = new Auth0Strategy({
@@ -56,6 +61,15 @@ async function uprn(postcode) {
     }
   }
 }
+
+MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
+  if (err) {
+    throw err;
+  };
+  database = client.db(DB_NAME);
+  collection = database.collection("User");
+  console.log("Connected to " + DB_NAME + "!");
+})
 
 app.get("/", (req, res) => {
   if (req.user) {
