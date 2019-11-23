@@ -8,7 +8,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv").config();
 
 const passport = require("passport");
 const Auth0Strategy = require("passport-auth0");
@@ -18,7 +18,7 @@ const AUTH0_SECRET = process.env.AUTH0_SECRET;
 
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
-const CONNECTION_URL = process.env.CONNECTION_URL;
+const CONNECTION_URL = "mongodb+srv://durhack:" + process.env.mongo + "@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority"
 const DB_NAME = "DHDM"
 const OS_KEY = process.env.OS_KEY;
 
