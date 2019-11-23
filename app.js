@@ -21,15 +21,34 @@ const CONNECTION_URL = "mongodb+srv://durhack:Yeet%2A420%25@cluster0-7p6nu.gcp.m
 const DB_NAME = "DHDM"
 const OS_KEY = "hkABo11OhSUjmTRvKi2AysevY8n2LmI7";
 
+MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
+  if (err) {
+    throw err;
+  };
+  database = client.db(DB_NAME);
+  collection = database.collection("User");
+  console.log("Connected to " + DB_NAME + "!");
+})
+
 const strategy = new Auth0Strategy({
   domain: AUTH0_DOMAIN,
   clientID: AUTH0_ID,
   clientSecret: AUTH0_SECRET,
   callbackURL: "http://127.0.0.1:8090/callback"
 }, function (accessToken, refreshToken, extraParams, profile, done) {
-    return done(null, profile);
-  }
-)
+  collection.findOne({_id: profile.id}, function(err, res) {
+    if (err) {
+      console.log(err);
+    } else {
+      if (res == null) {
+        collection.insertOne({_id: profile.id, first_name: profile.name.givenName.replace(/\s+$/g, "") || null, last_name: profile.name.familyName.replace(/\s+$/g, "") || null});
+      } else {
+        console.log(res);
+      }
+    }
+  })
+  return done(null, profile);
+})
 
 passport.use(strategy);
 passport.serializeUser(function (user, done) {
@@ -64,18 +83,9 @@ async function get_uprn(address) {
   }
 }
 
-MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
-  if (err) {
-    throw err;
-  };
-  database = client.db(DB_NAME);
-  collection = database.collection("User");
-  console.log("Connected to " + DB_NAME + "!");
-})
-
 app.get("/", (req, res) => {
   if (req.user) {
-    console.log(req.user);
+    //console.log(req.user);
   }
   res.send("hi");
 });
@@ -96,16 +106,17 @@ async function (req, res) {
 
 app.get("/bins/:address", async function(req, res) {
   uprn = await get_uprn(req.params.address);
-  axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn) .then((response) => {
-      if(response.status === 200) {
-      const html = response.data;
-      let $ = cheerio.load(html);
-      let page = $("#page_PageContentHolder_template_pnlArticleBody").html();
-      $ = cheerio.load(page);
-      let rubbish_date = $("p:nth-of-type(2)").html();
-      let recycling_date = $("p:nth-of-type(3)").html();
-      return ([rubbish_date, recycling_date]);
-  }
+  console.log(uprn)
+  axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn).then((response) => {
+      if (response.status === 200) {
+        const html = response.data;
+        let $ = cheerio.load(html);
+        let page = $("#page_PageContentHolder_template_pnlArticleBody").html();
+        $ = cheerio.load(page);
+        let rubbish_date = $("p:nth-of-type(2)").html();
+        let recycling_date = $("p:nth-of-type(3)").html();
+        return ([rubbish_date, recycling_date]);
+      }
   }, (error) => console.log(err) );
 });
 
