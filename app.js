@@ -72,6 +72,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.set('views', __dirname + '/views');
+app.set('view engine', 'pug');
+app.use(express.static(path.join(__dirname, "/public")));
 
 // RETRIEVING UPRN
 async function get_uprn(address) {
@@ -89,7 +92,7 @@ app.get("/", (req, res) => {
   if (req.user) {
     //console.log(req.user);
   }
-  res.render("index.html");
+  res.render("index");
 });
 
 app.get("/login", passport.authenticate("auth0", {
