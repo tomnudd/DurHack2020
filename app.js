@@ -99,4 +99,10 @@ app.get("/logout", (req, res) => {
   res.redirect(logoutURL);
 });
 
+app.get("/user", function(req, res, next) {
+  if (req.user) {
+    // send user profile info
+    res.send("");
+  }
+})
 module.exports = app;
