@@ -2,6 +2,7 @@
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="index.js"></script>
+<script src="me.js"></script>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="cursed.css">
@@ -24,14 +25,53 @@
     <div w3-test-directive></div>
 
     <div id="mainMenu" ng-show="visibilities.mainMenu">
+        <p class="big_button" style="background-color:olivedrab" ng-click="me()">Me</p>
         <p class="big_button" style="background-color:mediumaquamarine" ng-click="myDay()">My day</p>
         <p class="big_button" style="background-color:dodgerblue" ng-click="myPeople()">My people</p>
         <p class="big_button" style="background-color:slateblue" ng-click="myMoney()">My money</p>
     </div>
 
+    <div id="me" ng-show="visibilities.me">
+        <banner></banner>
+        <br>
+        <div>
+            <div class="container-fluid">
+                <div class=row>
+                    <div class="col-9">
+                        <h2>My hobbies</h2>
+                    </div>
+                    <div class="col-3">
+                        <div class="less_big_button" onclick="swapHobbiesToEdit();" style="align-self: flex-end; background-color: palevioletred;">Edit</div>
+                    </div>
+        
+                </div>
+            </div>
+            <div id="hobbies-txt">
+              yeet
+            </div>
+            
+            <div class="container-fluid">
+                <div class=row>
+                    <div class="col-9">
+                        <h2>My favourites</h2>
+                    </div>
+                    <div class="col-3">
+                        <div class="less_big_button" onclick="swapFavouritesToEdit();" style="align-self: flex-end; background-color: palevioletred;">Edit</div>
+                    </div>
+        
+                </div>
+            </div>
+            <div id="favourites-txt">
+              yeet
+            </div>
+        </div>
+      </div>
+
     <div id="myDay" ng-show="visibilities.myDay">
       <banner></banner>
       day
+
+      drink more water pls
     </div>
 
     <div id="myPeople" ng-show="visibilities.myPeople">
