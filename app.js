@@ -8,7 +8,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const bodyParser = require("body-parser");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 
 const passport = require("passport");
 const Auth0Strategy = require("passport-auth0");
