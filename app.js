@@ -8,6 +8,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const bodyParser = require("body-parser");
+const path = require("path");
 require("dotenv").config();
 
 const passport = require("passport");
@@ -71,6 +72,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.set('views', __dirname + '/views');
+app.set('view engine', 'pug');
+app.use(express.static(path.join(__dirname, "/public")));
 
 // RETRIEVING UPRN
 async function get_uprn(address) {
@@ -88,7 +92,7 @@ app.get("/", (req, res) => {
   if (req.user) {
     //console.log(req.user);
   }
-  res.send("hi");
+  res.render("index");
 });
 
 app.get("/login", passport.authenticate("auth0", {
@@ -133,6 +137,8 @@ app.get("/user/data", async function(req, res) {
 app.get("/hobbies/list/:id", async function(req, res){
   user_id = req.params.id
 
+  console.log(req);
+
   // query the db to get all the favourites of a particular person
   let list = ['hobby 1', 'hobby 2'];
 
@@ -148,16 +154,18 @@ app.post('/hobbies/edit', function (req, res) {
 
   try {
       // update the db with the new favourites
-      res.status(204).send();
-  } catch {
-    res.status(500).send();
+      resp.status(204).send();
+  } catch(error) {
+    console.log(error)
+    resp.status(500).send();
   }
 
 });
 
 // favourites
-app.get("/favourites/list/:id", async function(req, res){
-  user_id = req.params.id
+app.get("/favourites/list", async function(req, res){
+  let user_id = req.user.id;
+  console.log(user_id);
 
   // query the db to get all the favourites of a particular person
   let list = ['something', 'something else'];
@@ -174,9 +182,10 @@ app.post('/favourites/edit', function (req, res) {
 
   try {
       // update the db with the new favourites
-      res.status(204).send();
-  } catch {
-    res.status(500).send();
+      resp.status(204).send();
+  } catch(error) {
+    console.log("error");
+    resp.status(500).send();
   }
 
 });
