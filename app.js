@@ -148,9 +148,9 @@ app.get("/hobbies/list", async function(req, res){
   // query the db to get all the favourites of a particular person
   let list = ['hobby 1', 'hobby 2'];
 
-  let resp_data = JSON.stringify(list);
-  resp.setHeader('Content-Type', 'application/json');
-  resp.send(resp_data);
+  let res_data = JSON.stringify(list);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(res_data);
 });
 
 app.post('/hobbies/edit', function (req, resp) {
