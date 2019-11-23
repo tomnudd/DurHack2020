@@ -1,8 +1,11 @@
 const express = require("express");
 const app = express();
 const session = require("express-session");
+
 const fetch = require("node-fetch");
 const querystring = require("querystring");
+const axios = require("axios");
+const cheerio = require("cheerio");
 
 const bodyParser = require("body-parser");
 
@@ -12,6 +15,10 @@ const AUTH0_DOMAIN = "dev-92nn7edb.auth0.com";
 const AUTH0_ID = "YfRZS0bxC4kFrPMFsFFnim0AP1L4If4V";
 const AUTH0_SECRET = "kxBC2xsABE3vnAnqPRlRmcreiLdLc--Fe8Q8Pv2K3msXl1BiBGH51NAZfqVoGp-0";
 
+const mongodb = require("mongodb");
+const MongoClient = mongodb.MongoClient;
+const CONNECTION_URL = "mongodb+srv://durhack:Yeet%2A420%25@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority"
+const DB_NAME = "DHDM"
 const OS_KEY = "hkABo11OhSUjmTRvKi2AysevY8n2LmI7";
 
 const strategy = new Auth0Strategy({
@@ -46,26 +53,61 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // RETRIEVING UPRN
-async function uprn(postcode) {
-  if (postcode && typeof(postcode) == "string") {
-    const response = await fetch("https://api.ordnancesurvey.co.uk/places/v1/addresses/postcode?postcode=" + postcode + "&key=" + OS_KEY);
+async function get_uprn(address) {
+  // we can take their entire address and the OS api can process that and return json
+  if (address && typeof(address) == "string") {
+    const response = await fetch("https://api.ordnancesurvey.co.uk/places/v1/addresses/find?query=" + address + "&key=" + OS_KEY);
     if (response && response.ok) {
-      data = await response.json();
-      // this assumes all houses with the same postcode have the same collection date
+      data = await response.json()
       return(data.results[0].DPA.UPRN);
     }
   }
 }
 
-app.get("/", function(req, res) {
-  res.send("Hi");
+MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
+  if (err) {
+    throw err;
+  };
+  database = client.db(DB_NAME);
+  collection = database.collection("User");
+  console.log("Connected to " + DB_NAME + "!");
 })
 
-app.get("/user", function(req, res, next) {
+app.get("/", (req, res) => {
   if (req.user) {
-    // send user profile info
-    res.send("");
+    console.log(req.user);
   }
-})
+  res.send("hi");
+});
+
+app.get("/login", passport.authenticate("auth0", {
+  scope: "openid email profile"
+}), function(req, res) {
+  res.redirect("/");
+});
+
+app.get("/callback", passport.authenticate("auth0", {
+	failureRedirect: "/whoops"
+}),
+async function (req, res) {
+	res.redirect("/");
+});
+// web scraping time!
+
+app.get("/bins/:address", async function(req, res) {
+  uprn = await get_uprn(req.params.address);
+  axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn) .then((response) => {
+      if(response.status === 200) {
+      const html = response.data;
+      let $ = cheerio.load(html);
+      let page = $("#page_PageContentHolder_template_pnlArticleBody").html();
+      $ = cheerio.load(page);
+      let rubbish_date = $("p:nth-of-type(2)").html();
+      let recycling_date = $("p:nth-of-type(3)").html();
+      return ([rubbish_date, recycling_date]);
+  }
+  }, (error) => console.log(err) );
+});
+
 
 module.exports = app;
