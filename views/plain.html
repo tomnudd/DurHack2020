@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="index.js"></script>
 <script src="me.js"></script>
-<script src="day.js"></script>
-<script src="money.js"></script>
 
-
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="cursed.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="cursed.css">
 </head>
-
 <body>
   <h1 id="intro">Welcome to our amazing(ish) DurHack project!</h1>
   <div ng-app="myApp" ng-controller="myCtrl">
@@ -26,6 +21,8 @@
     <div id="auth">
       <input type="submit" value="Login" onclick="window.location='/login';" />
     </div>
+
+    <div w3-test-directive></div>
 
     <div id="mainMenu" ng-show="visibilities.mainMenu" class="container-fluid fixed">
       <div class="row">
@@ -47,8 +44,7 @@
               <h2>My hobbies</h2>
             </div>
             <div class="col-3">
-              <div id="editHobbies" class="less_big_button"
-                style="align-self: flex-end; background-color: palevioletred;">Edit</div>
+              <div id="editHobbies" class="less_big_button" style="align-self: flex-end; background-color: palevioletred;">Edit</div>
             </div>
           </div>
         </div>
@@ -108,41 +104,18 @@
     </div>
 
     <div id="myDay" ng-show="visibilities.myDay">
-      day
-      <br>
-      drink more water pls
-      <div id="calendar"></div>
     </div>
 
     <div id="myPeople" ng-show="visibilities.myPeople">
-      <div id="person-txt">
-
-      </div>
-      <div id="addPersonButton" class="less_big_button" style="align-self: flex-end; background-color: palevioletred;">Add a
-        new person</div>
-      <div id="add-person-txt">
-      </div>
+      people
     </div>
 
     <div id="myMoney" ng-show="visibilities.myMoney">
-<div class="text-center">
-
-      <h1>Have I bought it yet?</h1>
-
-<p id="info"></p>
-
-
-<button type = "button" class = "btn btn-primary" onclick="process_new_transaction()">Click me</button>
-
-<p id="info1"></p>
-<br>
-<p id="detail"></p>
-</div>
+      money
     </div>
   </div>
 
   <input id="lgout" type="submit" value="Logout" onclick="window.location='/logout';" />
 
 </body>
-
 </html>
