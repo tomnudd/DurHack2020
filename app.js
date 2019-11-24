@@ -33,6 +33,7 @@ MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology:
   console.log("Connected to " + DB_NAME + "!");
 })
 
+//auth0 strategy
 const strategy = new Auth0Strategy({
   domain: AUTH0_DOMAIN,
   clientID: AUTH0_ID,
@@ -44,6 +45,7 @@ const strategy = new Auth0Strategy({
       console.log(err);
     } else {
       if (res == null) {
+        // insert a new document into db for the user if they do not exist
         collection.insertOne({_id: profile.id, first_name: profile.name.givenName.replace(/\s+$/g, "") || null, last_name: profile.name.familyName.replace(/\s+$/g, "") || null});
       } else {
         console.log(res);
@@ -90,6 +92,7 @@ async function get_uprn(address) {
   }
 }
 
+// render frontend via pug
 app.get("/", (req, res) => {
   if (req.user) {
     //console.log(req.user);
@@ -111,6 +114,7 @@ async function (req, res) {
 });
 // web scraping time!
 
+// returns an array containing info about bin collection - returns two strings in this arr
 app.get("/bins/:address", async function(req, res) {
   uprn = await get_uprn(req.params.address);
   console.log(uprn);
@@ -128,6 +132,7 @@ app.get("/bins/:address", async function(req, res) {
   }, (error) => console.log(err) );
 });
 
+// grabs all the data we have on a user in the db
 app.get("/user/data", async function(req, res) {
   if (req.user && req.user.id) {
     collection.findOne({_id: req.user.id}, function(err, resp) {
@@ -143,6 +148,8 @@ app.get("/user/data", async function(req, res) {
 
 // 'ME' PAGE
 // hobbies
+
+// return arr of hobbies of the user
 app.get("/hobbies/list", async function(req, res){
   if (req.user && req.user.id) {
     let user_id = req.user.id;
@@ -164,6 +171,7 @@ app.get("/hobbies/list", async function(req, res){
   }
 });
 
+// send arr to replace the current arr of hobbies
 app.post("/hobbies/edit", function (req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
@@ -176,6 +184,7 @@ app.post("/hobbies/edit", function (req, res) {
 });
 
 // favourites
+// return list of current favourites, or create
 app.get("/favourites/list", async function(req, res){
   if (req.user && req.user.id) {
     let user_id = req.user.id;
@@ -198,6 +207,7 @@ app.get("/favourites/list", async function(req, res){
   }
 });
 
+// send object of favourites to replace the current object with
 app.post("/favourites/edit", function (req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
@@ -208,6 +218,7 @@ app.post("/favourites/edit", function (req, res) {
   }
 });
 
+// return a list of people the user knows!
 app.get("/people/list", function(req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
@@ -227,11 +238,13 @@ app.get("/people/list", function(req, res) {
   }
 });
 
+// adding a new person, send body params: name, img (url), description, memories
 app.get("/people/add", function(req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
     let new_person = {name: req.body.name, img: req.body.img, description: req.body.description, memories: req.body.memories};
-    collection.updateOne({_id: user_id}, {"$push": {people: new_person}})
+    collection.updateOne({_id: user_id}, {"$push": {people: new_person}});
+    res.status(200).send("Woop");
   }
 });
 
