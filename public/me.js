@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    let editNumber = document.getElementById("editAddress");
+    let editNumber = document.getElementById("editNumber");
 
     editNumber.addEventListener('click', async function () {
         if (editNumber.innerText != 'Edit') {
