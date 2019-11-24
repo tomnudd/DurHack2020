@@ -165,11 +165,13 @@ app.get("/hobbies/list", async function(req, res){
 });
 
 app.post("/hobbies/edit", function (req, res) {
-  if (req.user && req.user.id && req.body) {
+  if (req.user && req.user.id) {
     let user_id = req.user.id;
     let new_hobbies = req.body;
-    collection.updateOne({_id: user_id}, {$set: {hobbies: new_hobbies}}, {upsert:true})
-    res.status(200);
+    collection.updateOne({_id: user_id}, {"$set": {hobbies: new_hobbies}}, {upsert:true})
+    res.status(200).send("Woop");
+  } else {
+    res.status(400).send("Oh no");
   }
 });
 
@@ -199,9 +201,10 @@ app.get("/favourites/list", async function(req, res){
 app.post("/favourites/edit", function (req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
-    let new_favourites = req.body.new_favourites;
+    let new_favourites = req.body;
     console.log(new_favourites);
-    collection.updateOne({_id: user_id}, {$set: {favourites: new_favourites}}, {upsert:true});
+    collection.updateOne({_id: user_id}, {"$set": {favourites: new_favourites}}, {upsert:true});
+    res.status(200).send("Woop");
   }
 });
 
