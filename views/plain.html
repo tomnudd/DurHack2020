@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<head>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="index.js"></script>
 <script src="me.js"></script>
@@ -7,12 +8,9 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
   integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="cursed.css">
-
-
+</head>
 <body>
-
-  <h1>Welcome to our amazing(ish) DurHack project!</h1>
-
+  <h1 id="intro">Welcome to our amazing(ish) DurHack project!</h1>
   <div ng-app="myApp" ng-controller="myCtrl">
     <div id="login" ng-show="visibilities.login">
       <p>First Name: <input type="text" ng-model="firstName"><br>
@@ -22,10 +20,13 @@
       </p>
       <button ng-click="mainMenu()">Go</button>
     </div>
+    <div id="auth">
+      <input type="submit" value="Login" onclick="window.location='/login';" />
+    </div>
 
     <div w3-test-directive></div>
 
-    <div id="mainMenu" ng-show="visibilities.mainMenu" class="container-fluid">
+    <div id="mainMenu" ng-show="visibilities.mainMenu" class="container-fluid fixed">
       <div class="row">
         <div id="meButton" class="col big_button" style="background-color:olivedrab" ng-click="me()">Me</div>
         <div id="myDayButton" class="col big_button" style="background-color:mediumaquamarine" ng-click="myDay()">My Day
@@ -46,7 +47,7 @@
               <h2>My hobbies</h2>
             </div>
             <div class="col-3">
-              <div id="hobbiesEdit"class="less_big_button" 
+              <div id="editHobbies" class="less_big_button"
                 style="align-self: flex-end; background-color: palevioletred;">Edit</div>
             </div>
 
@@ -62,7 +63,7 @@
               <h2>My favourites</h2>
             </div>
             <div class="col-3">
-              <div id="favouritesEdit" class="less_big_button" 
+              <div id="editFavourites" class="less_big_button"
                 style="align-self: flex-end; background-color: palevioletred;">Edit</div>
             </div>
 

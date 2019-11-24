@@ -112,6 +112,16 @@ app.get("/callback", passport.authenticate("auth0", {
 async function (req, res) {
 	res.redirect("/");
 });
+
+app.get("/isLoggedIn", async function(req, res) {
+  if (req.user && req.user.id) {
+    console.log(req);
+    res.json({loggedIn: true});
+  } else {
+    res.json({loggedIn: false});
+  }
+});
+
 // web scraping time!
 
 // returns an array containing info about bin collection - returns two strings in this arr
@@ -245,12 +255,6 @@ app.get("/people/add", function(req, res) {
     let new_person = {name: req.body.name, img: req.body.img, description: req.body.description, memories: req.body.memories};
     collection.updateOne({_id: user_id}, {"$push": {people: new_person}});
     res.status(200).send("Woop");
-  }
-});
-
-app.get("/isLoggedIn", function(req, res) {
-  if (req.user && req.user.id) {
-    res.status(200).send(true);
   }
 });
 

@@ -1,7 +1,46 @@
 let currentFavourites = "";
 
+function change() {
+    var appElement = document.querySelector('[ng-app=myApp]');
+    var $scope = angular.element(appElement).scope();
+    $scope.$apply(function() {
+        $scope.visibilities.login = false;
+        $scope.visibilities.mainMenu = true;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+
     let meButton = document.getElementById("meButton");
+
+    async function isLoggedIn() {
+      try {
+        let response = await fetch("http://127.0.0.1:8090/isLoggedIn");
+        let body = await response.text();
+        let parsed = JSON.parse(body);
+        if (parsed.loggedIn == false) {
+          console.log("yay")
+          document.getElementById("auth").style.display="inline";
+        } else {
+          try {
+            let rsp = await fetch("http://127.0.0.1:8090/user/data");
+            let body2 = await rsp.text();
+            let parsed2 = JSON.parse(body2);
+            if (!parsed2.first_name || !parsed2.last_name) {
+              document.getElementById("login").style.display="inline";
+            } else {
+              change();
+            }
+          } catch(err) {
+            console.log(err);
+          }
+        }
+      } catch(err) {
+        console.log(err);
+      }
+    }
+
+    isLoggedIn();
 
     meButton.addEventListener('click', async function () {
         try {
