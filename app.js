@@ -115,7 +115,6 @@ async function (req, res) {
 
 app.get("/isLoggedIn", async function(req, res) {
   if (req.user && req.user.id) {
-    console.log(req);
     res.json({loggedIn: true});
   } else {
     res.json({loggedIn: false});
@@ -304,7 +303,7 @@ app.get("/number", function(req, res) {
 app.post("/number/edit", function (req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
-    let new_number = req.body;
+    let new_number = req.body[0];
     collection.updateOne({_id: user_id}, {"$set": {number: new_number}}, {upsert:true});
     res.status(200).send("Woop");
   }
@@ -313,7 +312,7 @@ app.post("/number/edit", function (req, res) {
 app.post("/address/edit", function (req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
-    let new_address = req.body;
+    let new_address = req.body[0];
     collection.updateOne({_id: user_id}, {"$set": {address: new_address}}, {upsert:true});
     res.status(200).send("Woop");
   }

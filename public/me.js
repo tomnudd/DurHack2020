@@ -66,16 +66,15 @@ document.addEventListener('DOMContentLoaded', function () {
             let response = await fetch('http://127.0.0.1:8090/favourites/list');
             let body = await response.text();
 
-            console.log(response);
             let favourites = JSON.parse(body);
             currentFavourites = favourites;
 
             document.getElementById('favourites-txt').innerHTML = '<ul>';
 
             for (var key in favourites) {
-                if (favourites[key]) {
-                    document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key.replace(/_/g, " ") + ' is ' + favourites[key] + '</li>';
-                }
+              if (favourites[key]) {
+                document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key.replace(/_/g, " ") + ' is ' + favourites[key] + '</li>';
+              }
             }
 
             document.getElementById('favourites-txt').innerHTML += '</ul>';
@@ -83,14 +82,88 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             document.getElementById('favourites-txt').innerHTML = 'An error occurred! Please try again later.';
         }
+
+        try {
+          let response = await fetch('http://127.0.0.1:8090/address');
+          let address = await response.text();
+          document.getElementById('address-txt').innerHTML = '<p>' + address + '</p>';
+        } catch (error) {
+          document.getElementById('address-txt').innerHTML = 'An error occurred! Please try again later.';
+        }
+
+        try {
+          let response = await fetch('http://127.0.0.1:8090/number');
+          let number = await response.text();
+          document.getElementById('number-txt').innerHTML = '<p>' + number + '</p>';
+        } catch (error) {
+          document.getElementById('number-txt').innerHTML = 'An error occurred! Please try again later.';
+        }
+
+
+    });
+
+    let editAddress = document.getElementById("editAddress");
+
+    editAddress.addEventListener('click', async function () {
+        if (editAddress.innerText != 'Edit') {
+            let text = document.getElementById("new-address").value;
+            var dataToSend = [text];
+            let response = await fetch('http://127.0.0.1:8090/address/edit', {
+                method: 'POST',
+                body: JSON.stringify(dataToSend),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            // go into view mode and remake the sentences
+
+            editAddress.innerText = 'Edit';
+
+            document.getElementById("address-txt").innerHTML = '<p>' + dataToSend + '</p>';
+        } else {
+            // go into edit mode
+            console.log('going into edit mode');
+            editAddress.innerText = 'Update!';
+
+            text = document.getElementById("address-txt").innerText;
+            document.getElementById("address-txt").innerHTML = "<textarea id=\'new-address\' autofocus rows=\'5\' cols=\'45\'>" + text + "</textarea>";
+        }
+
+    });
+
+    let editNumber = document.getElementById("editNumber");
+
+    editNumber.addEventListener('click', async function () {
+        if (editNumber.innerText != 'Edit') {
+            let text = document.getElementById("new-number").value;
+            var dataToSend = [text];
+            let response = await fetch('http://127.0.0.1:8090/address/edit', {
+                method: 'POST',
+                body: JSON.stringify(dataToSend),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            // go into view mode and remake the sentences
+
+            editNumber.innerText = 'Edit';
+
+            document.getElementById("number-txt").innerHTML = '<p>' + dataToSend + '</p>';
+        } else {
+            // go into edit mode
+            console.log('going into edit mode');
+            editNumber.innerText = 'Update!';
+
+            text = document.getElementById("number-txt").innerText;
+            document.getElementById("number-txt").innerHTML = "<textarea id=\'new-number\' autofocus rows=\'5\' cols=\'45\'>" + text + "</textarea>";
+        }
+
     });
 
     let editHobbies = document.getElementById("editHobbies");
 
     editHobbies.addEventListener('click', async function () {
         if (editHobbies.innerText != 'Edit') {
-            console.log('submitting an edit');
-
             let text = document.getElementById("new-hobbies").value;
             var temp = text.split("\n");
 
@@ -98,8 +171,6 @@ document.addEventListener('DOMContentLoaded', function () {
             var dataToSend = temp.filter(function (value, index, arr) {
                 return value != "";
             });
-
-            console.log("phase 1")
 
             let response = await fetch('http://127.0.0.1:8090/hobbies/edit', {
                 method: 'POST',
@@ -110,8 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             // go into view mode and remake the sentences
 
-            console.log("phase 2")
-
             editHobbies.innerText = 'Edit';
 
             document.getElementById("hobbies-txt").innerHTML = "<ul>"
@@ -119,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById("hobbies-txt").innerHTML += '<li>' + dataToSend[i] + '</li>';
             }
             document.getElementById("hobbies-txt").innerHTML += "</ul>";
-            console.log("phase 3")
         } else {
             // go into edit mode
             console.log('going into edit mode');
