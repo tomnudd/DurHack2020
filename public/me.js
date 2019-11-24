@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // add the person's data to the on-page list
 
 
-            addPersonButton.innerText = 'Edit';
+            addPersonButton.innerText = 'Add a new person';
 
             document.getElementById("person-txt").innerHTML += "<h2>" + name + "</h2>"
                 document.getElementById("person-txt").innerHTML += "<div class='container'>"
