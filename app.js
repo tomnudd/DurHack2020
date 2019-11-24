@@ -141,7 +141,7 @@ app.get("/bins/:address", async function(req, res) {
         let rubbish_date = $("p:nth-of-type(2)").html();
         let recycling_date = $("p:nth-of-type(3)").html();
         console.log([rubbish_date, recycling_date])
-        return ([rubbish_date, recycling_date]);
+        res.send ([rubbish_date, recycling_date]);
       }
   }, (error) => console.log(err) );
 });
