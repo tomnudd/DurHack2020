@@ -232,6 +232,17 @@ app.post("/favourites/edit", function (req, res) {
   }
 });
 
+// adding a new person, send body params: name, img (url), description, memories
+app.post("/people/new", function(req, res) {
+  if (req.user) {
+    let user_id = req.user.id;
+    console.log(req.body)
+    let new_person = req.body;
+    collection.updateOne({_id: user_id}, {"$push": {people: new_person}});
+    res.status(200).send("Woop");
+  }
+});
+
 // return a list of people the user knows!
 app.get("/people/list", function(req, res) {
   if (req.user && req.user.id) {
@@ -249,16 +260,6 @@ app.get("/people/list", function(req, res) {
         }
       }
     });
-  }
-});
-
-// adding a new person, send body params: name, img (url), description, memories
-app.get("/people/add", function(req, res) {
-  if (req.user && req.user.id) {
-    let user_id = req.user.id;
-    let new_person = {name: req.body.name, img: req.body.img, description: req.body.description, memories: req.body.memories};
-    collection.updateOne({_id: user_id}, {"$push": {people: new_person}});
-    res.status(200).send("Woop");
   }
 });
 

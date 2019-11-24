@@ -249,86 +249,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    let editAddress = document.getElementById("editAddress");
-
-    editAddress.addEventListener('click', async function () {
-        if (editAddress.innerText != 'Edit') {
-            console.log('submitting an edit');
-
-            let text = document.getElementById("new-address").value;
-
-            // remove blank lines
-            var dataToSend = temp.filter(function (value, index, arr) {
-                return value != "";
-            });
-
-            let response = await fetch('http://127.0.0.1:8090/address/edit', {
-                method: 'POST',
-                body: JSON.stringify(dataToSend),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            // go into view mode and remake the sentences
-
-            editAddress.innerText = 'Edit';
-
-            document.getElementById("address-txt").innerHTML = "<ul>"
-            for (i in dataToSend) {
-                document.getElementById("address-txt").innerHTML += '<li>' + dataToSend[i] + '</li>';
-            }
-            document.getElementById("address-txt").innerHTML += "</ul>";
-        } else {
-            // go into edit mode
-            console.log('going into edit mode');
-            editAddress.innerText = 'Update!';
-
-            text = document.getElementById("address-txt").innerText;
-            document.getElementById("address-txt").innerHTML = "<textarea id=\'new-address\' autofocus rows=\'5\' cols=\'45\'>" + text + "</textarea>";
-        }
-
-    });
-
-    let editNumber = document.getElementById("editNumber");
-
-    editNumber.addEventListener('click', async function () {
-        if (editNumber.innerText != 'Edit') {
-            console.log('submitting an edit');
-
-            let text = document.getElementById("new-number").value;
-
-            // remove blank lines
-            var dataToSend = temp.filter(function (value, index, arr) {
-                return value != "";
-            });
-
-            let response = await fetch('http://127.0.0.1:8090/number/edit', {
-                method: 'POST',
-                body: JSON.stringify(dataToSend),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            // go into view mode and remake the sentences
-
-            editNumber.innerText = 'Edit';
-
-            document.getElementById("number-txt").innerHTML = "<ul>"
-            for (i in dataToSend) {
-                document.getElementById("number-txt").innerHTML += '<li>' + dataToSend[i] + '</li>';
-            }
-            document.getElementById("number-txt").innerHTML += "</ul>";
-        } else {
-            // go into edit mode
-            console.log('going into edit mode');
-            editNumber.innerText = 'Update!';
-
-            text = document.getElementById("number-txt").innerText;
-            document.getElementById("number-txt").innerHTML = "<textarea id=\'new-number\' autofocus rows=\'5\' cols=\'45\'>" + text + "</textarea>";
-        }
-
-    });
-
     let peopleButton = document.getElementById("myPeople");
 
     peopleButton.addEventListener('click', async function () {
@@ -389,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
             };
 
             console.log(dataToSend);
-            let response = await fetch('http://127.0.0.1:8090/people/add', {
+            let response = await fetch('http://127.0.0.1:8090/people/new', {
                 method: 'POST',
                 body: JSON.stringify(dataToSend),
                 headers: {
