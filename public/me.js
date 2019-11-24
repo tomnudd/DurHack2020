@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             for (var key in favourites) {
                 if (favourites[key]) {
-                    document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key + ' is ' + favourites[key] + '</li>';
+                    document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key.replace(/_/g, " ") + ' is ' + favourites[key] + '</li>';
                 }
             }
 
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    let editHobbies = document.getElementById("hobbiesEdit");
+    let editHobbies = document.getElementById("editHobbies");
 
     editHobbies.addEventListener('click', async function () {
         if (editHobbies.innerText != 'Edit') {
@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return value != "";
             });
 
+            console.log("phase 1")
+
             let response = await fetch('http://127.0.0.1:8090/hobbies/edit', {
                 method: 'POST',
                 body: JSON.stringify(dataToSend),
@@ -67,6 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             // go into view mode and remake the sentences
 
+            console.log("phase 2")
+
             editHobbies.innerText = 'Edit';
 
             document.getElementById("hobbies-txt").innerHTML = "<ul>"
@@ -74,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById("hobbies-txt").innerHTML += '<li>' + dataToSend[i] + '</li>';
             }
             document.getElementById("hobbies-txt").innerHTML += "</ul>";
+            console.log("phase 3")
         } else {
             // go into edit mode
             console.log('going into edit mode');
@@ -85,10 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    let favouritesEdit = document.getElementById("favouritesEdit");
+    let favouritesEdit = document.getElementById("editFavourites");
 
     favouritesEdit.addEventListener('click', async function () {
-        if (editHobbies.innerText != 'Edit') {
+        if (favouritesEdit.innerText != 'Edit') {
             console.log('submitting an edit');
             let dataToSend = {
                 "food": document.getElementById("favouritefood").value,
@@ -99,23 +104,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 "book": document.getElementById("favouritebook").value,
                 "place": document.getElementById("favouriteplace").value
             };
+            let toSend = JSON.stringify(dataToSend);
 
-            let response = await fetch('http://127.0.0.1:8090/hobbies/edit', {
+            let response = await fetch('http://127.0.0.1:8090/favourites/edit', {
                 method: 'POST',
-                body: JSON.stringify(dataToSend),
+                body: toSend,
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             // go into view mode and remake the sentencesd
 
-            editHobbies.innerText = 'Edit';
+            favouritesEdit.innerText = 'Edit';
 
-            ocument.getElementById('favourites-txt').innerHTML = '<ul>';
+            document.getElementById('favourites-txt').innerHTML = '<ul>';
 
             for (var key in dataToSend) {
-                if (favourites[key]) {
-                    document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key + ' is ' + dataToSend[key] + '</li>';
+                if (dataToSend[key]) {
+                    document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key.replace(/_/g, " ") + ' is ' + dataToSend[key] + '</li>';
                 }
             }
 
@@ -135,4 +141,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
-
