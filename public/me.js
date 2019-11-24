@@ -1,4 +1,3 @@
-let currentHobbies = "";
 let currentFavourites = "";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -22,10 +21,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
+            console.log('sending requests');
             let response = await fetch('http://127.0.0.1:8090/favourites/list');
             let body = await response.text();
 
+            console.log(response);
             let favourites = JSON.parse(body);
+            currentFavourites = favourites;
 
             document.getElementById('favourites-txt').innerHTML = '<ul>';
 
@@ -52,10 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
             var temp = text.split("\n");
 
             // remove blank lines
-            var dataToSend = temp.filter(function(value, index, arr){
+            var dataToSend = temp.filter(function (value, index, arr) {
                 return value != "";
             });
-        
+
             let response = await fetch('http://127.0.0.1:8090/hobbies/edit', {
                 method: 'POST',
                 body: JSON.stringify(dataToSend),
@@ -68,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             editHobbies.innerText = 'Edit';
 
             document.getElementById("hobbies-txt").innerHTML = "<ul>"
-            for (i in dataToSend){
+            for (i in dataToSend) {
                 document.getElementById("hobbies-txt").innerHTML += '<li>' + dataToSend[i] + '</li>';
             }
             document.getElementById("hobbies-txt").innerHTML += "</ul>";
@@ -81,32 +83,56 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("hobbies-txt").innerHTML = "<textarea id=\'new-hobbies\' autofocus rows=\'5\' cols=\'45\'>" + text + "</textarea>";
         }
 
-        // either toggles to or from edit mode
-
     });
 
     let favouritesEdit = document.getElementById("favouritesEdit");
 
     favouritesEdit.addEventListener('click', async function () {
-        let dataToSend = document.getElementById("favourites-txt");
+        if (editHobbies.innerText != 'Edit') {
+            console.log('submitting an edit');
+            let dataToSend = {
+                "food": document.getElementById("favouritefood").value,
+                "music": document.getElementById("favouritemusic").value,
+                "animal": document.getElementById("favouriteanimal").value,
+                "tv_programme": document.getElementById("favouritetv_programme").value,
+                "radio_programme": document.getElementById("favouriteradio_programme").value,
+                "book": document.getElementById("favouritebook").value,
+                "place": document.getElementById("favouriteplace").value
+            };
 
-        let response = await fetch('http://127.0.0.1:8090/favourites/edit', {
-            method: 'POST',
-            body: JSON.stringify(dataToSend),
-            headers: {
-                'Content-Type': 'application/json'
+            let response = await fetch('http://127.0.0.1:8090/hobbies/edit', {
+                method: 'POST',
+                body: JSON.stringify(dataToSend),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            // go into view mode and remake the sentencesd
+
+            editHobbies.innerText = 'Edit';
+
+            ocument.getElementById('favourites-txt').innerHTML = '<ul>';
+
+            for (var key in dataToSend) {
+                if (favourites[key]) {
+                    document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key + ' is ' + dataToSend[key] + '</li>';
+                }
             }
-        });
-        console.log(response);
+
+            document.getElementById('favourites-txt').innerHTML += '</ul>';
+        } else {
+            // go into edit mode
+            favouritesEdit.innerText = 'Update!';
+
+            document.getElementById('favourites-txt').innerHTML = '<ul>';
+
+            for (var key in currentFavourites) {
+                document.getElementById('favourites-txt').innerHTML += '<li> My favourite ' + key + ' is <input id=\'favourite'+key+'\'type=\'text\' value ='+ currentFavourites[key] + '></li>';
+            }
+
+            document.getElementById('favourites-txt').innerHTML += '</ul>';
+        }
     });
 
 });
 
-function swapHobbies() {
-
-};
-
-function swapFavourites() {
-    text = document.getElementById("favourites-txt").innerText;
-    document.getElementById("favourites-txt").innerHTML = "<textarea autofocus rows=\'5\' cols=\'45\'>" + text + "</textarea>";
-};
