@@ -107,7 +107,7 @@ app.get("/login", passport.authenticate("auth0", {
 });
 
 app.get("/callback", passport.authenticate("auth0", {
-	failureRedirect: "/whoops"
+	failureRedirect: "/"
 }),
 async function (req, res) {
 	res.redirect("/");
@@ -120,6 +120,11 @@ app.get("/isLoggedIn", async function(req, res) {
   } else {
     res.json({loggedIn: false});
   }
+});
+
+app.get("/logout", async function (req, res) {
+	await req.logout();
+	res.redirect("/");
 });
 
 // web scraping time!
@@ -254,6 +259,62 @@ app.get("/people/add", function(req, res) {
     let user_id = req.user.id;
     let new_person = {name: req.body.name, img: req.body.img, description: req.body.description, memories: req.body.memories};
     collection.updateOne({_id: user_id}, {"$push": {people: new_person}});
+    res.status(200).send("Woop");
+  }
+});
+
+app.get("/address", function(req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        if (resp.address) {
+          res.send(resp.address);
+        } else {
+          collection.updateOne({_id: user_id}, {"$set": {address:""}})
+          res.status(200);
+          res.send("");
+        }
+      }
+    });
+  }
+});
+
+app.get("/number", function(req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        if (resp.number) {
+          res.send(resp.number);
+        } else {
+          collection.updateOne({_id: user_id}, {"$set": {number:""}})
+          res.status(200);
+          res.send("");
+        }
+      }
+    });
+  }
+});
+
+app.post("/number/edit", function (req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    let new_number = req.body;
+    collection.updateOne({_id: user_id}, {"$set": {number: new_number}}, {upsert:true});
+    res.status(200).send("Woop");
+  }
+});
+
+app.post("/address/edit", function (req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    let new_address = req.body;
+    collection.updateOne({_id: user_id}, {"$set": {address: new_address}}, {upsert:true});
     res.status(200).send("Woop");
   }
 });
