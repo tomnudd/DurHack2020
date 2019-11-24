@@ -5,6 +5,8 @@
 <script src="index.js"></script>
 <script src="me.js"></script>
 <script src="day.js"></script>
+<script src="money.js"></script>
+
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
   integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -116,7 +118,16 @@
     </div>
 
     <div id="myMoney" ng-show="visibilities.myMoney">
-      money
+      <h1>Have I bought it yet?</h1>
+
+<p id="info"></p>
+
+
+<button onclick="process_new_transaction()">Click me</button>
+
+<p id="info1"></p>
+<br>
+<p id="detail"></p>
     </div>
   </div>
 
