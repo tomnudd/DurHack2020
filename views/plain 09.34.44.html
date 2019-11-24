@@ -15,6 +15,8 @@
     <div id="login" ng-show="visibilities.login">
       <p>First Name: <input type="text" ng-model="firstName"><br>
         Last Name: <input type="text" ng-model="lastName"><br>
+        <br>
+        Welcome, {{firstName + " " + lastName}}
       </p>
       <button ng-click="mainMenu()">Go</button>
     </div>
@@ -36,7 +38,8 @@
       </div>
     </div>
 
-    <div id="me" ng-show="visibilities.me"><br />
+    <div id="me" ng-show="visibilities.me">
+      <br>
       <div>
         <div class="container-fluid">
           <div class=row>
@@ -44,8 +47,10 @@
               <h2>My hobbies</h2>
             </div>
             <div class="col-3">
-              <div id="editHobbies" class="less_big_button" style="align-self: flex-end; background-color: palevioletred;">Edit</div>
+              <div id="editHobbies" class="less_big_button"
+                style="align-self: flex-end; background-color: palevioletred;">Edit</div>
             </div>
+
           </div>
         </div>
         <div id="hobbies-txt">
@@ -61,45 +66,12 @@
               <div id="editFavourites" class="less_big_button"
                 style="align-self: flex-end; background-color: palevioletred;">Edit</div>
             </div>
+
           </div>
         </div>
         <div id="favourites-txt">
           <p>yeet</p>
         </div>
-
-        <div class="container-fluid">
-          <div class=row>
-            <div class="col-9">
-              <h2>My address</h2>
-            </div>
-            <div class="col-3">
-              <div id="editAddress" class="less_big_button"
-                style="align-self: flex-end; background-color: palevioletred;">Edit</div>
-            </div>
-
-          </div>
-        </div>
-
-        <div id="address-txt">
-          <p>yeet</p>
-        </div>
-
-        <div class="container-fluid">
-          <div class=row>
-            <div class="col-9">
-              <h2>My phone number</h2>
-            </div>
-            <div class="col-3">
-              <div id="editNumber" class="less_big_button"
-                style="align-self: flex-end; background-color: palevioletred;">Edit</div>
-            </div>
-          </div>
-        </div>
-
-        <div id="number-txt">
-          <p>yeet</p>
-        </div>
-
       </div>
     </div>
 
@@ -116,9 +88,11 @@
     <div id="myMoney" ng-show="visibilities.myMoney">
       money
     </div>
+
   </div>
 
   <input id="lgout" type="submit" value="Logout" onclick="window.location='/logout';" />
 
 </body>
+
 </html>
