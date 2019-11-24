@@ -260,4 +260,93 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     });
+
+    let peopleButton = document.getElementById("myPeople");
+
+    peopleButton.addEventListener('click', async function () {
+        try {
+            let response = await fetch('http://127.0.0.1:8090/people/list');
+            let body = await response.text();
+
+            document.getElementById('person-txt').innerHTML = '<ul>';
+
+            let people = JSON.parse(body);
+            for (let i = 0; i < people.length; i++) {
+                // make it show data properly in a minute
+                document.getElementById('person-txt').innerHTML += '<h2>'+ people[i].name + '</h2>';
+            }
+
+            document.getElementById('person-txt').innerHTML += '</ul>';
+        } catch (error) {
+            document.getElementById('person-txt').innerHTML = 'An error occurred! Please try again later.';
+        }
+
+    });
+
+    let addPersonButton = document.getElementById("addPersonButton");
+    console.log(addPersonButton);
+    addPersonButton.addEventListener('click', async function () {
+        if (addPersonButton.innerText != 'Add a new person') {
+
+            let name = document.getElementById("name-input").value;
+            let image = document.getElementById("img-input").value;
+            
+            // remove blank lines from desc and memories and store as array
+            let desc = document.getElementById("desc-input").value;
+            var temp = desc.split("\n");
+
+            // remove blank lines
+            desc = temp.filter(function (value, index, arr) {
+                return value != "";
+            });
+
+            let memories = document.getElementById("memories-input").value;
+
+            var temp = memories.split("\n");
+
+            memories = temp.filter(function (value, index, arr) {
+                return value != "";
+            });
+
+            dataToSend = {
+                name : name,
+                img : image,
+                description: desc,
+                memories : memories
+            };
+
+            console.log(dataToSend);
+            let response = await fetch('http://127.0.0.1:8090/people/add', {
+                method: 'POST',
+                body: JSON.stringify(dataToSend),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            // add the person's data to the on-page list
+
+
+            editHobbies.innerText = 'Edit';
+
+            document.getElementById("add-person-txt").innerHTML = "<ul>"
+            for (i in dataToSend) {
+                document.getElementById("add-person-txt").innerHTML += '<li>' + dataToSend[i] + '</li>';
+            }
+            document.getElementById("add-person-txt").innerHTML += "</ul>";
+        } else {
+            // go into edit mode
+            console.log('adding person');
+            addPersonButton.innerText = 'Go!';
+
+            document.getElementById("add-person-txt").innerHTML = "<div class='container'>"
+            document.getElementById("add-person-txt").innerHTML +="<div class='row'><div class='col-4'>Name</div><div class='col-4'><input id='name-input' type='text'></div></div>";
+            document.getElementById("add-person-txt").innerHTML +="<div class='row'><div class='col-4'>Image</div><div class='col-4'><input id='img-input' type='text'></div></div>";
+            document.getElementById("add-person-txt").innerHTML +="<div class='row'><div class='col-4'>Description</div><div class='col-4'><textarea id='desc-input' autofocus rows=\'5\' cols=\'45\'></textarea></div></div>";
+            document.getElementById("add-person-txt").innerHTML +="<div class='row'><div class='col-4'>Memories</div><div class='col-4'><textarea id='memories-input' autofocus rows=\'5\' cols=\'45\'></textarea></div></div>";
+
+            document.getElementById("add-person-txt").innerHTML += "</div>";
+
+        }
+
+    });
 });
