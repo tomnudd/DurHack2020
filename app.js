@@ -248,4 +248,10 @@ app.get("/people/add", function(req, res) {
   }
 });
 
+app.get("/isLoggedIn", function(req, res) {
+  if (req.user && req.user.id) {
+    res.status(200).send(true);
+  }
+});
+
 module.exports = app;
