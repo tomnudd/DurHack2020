@@ -10,6 +10,11 @@ const cheerio = require("cheerio");
 
 const bodyParser = require("body-parser");
 const path = require("path");
+const {google} = require('googleapis');
+const calendar = google.calendar({
+  version: 'v3',
+  auth: process.env.GOOGLE_KEY // specify your API key here
+});
 require("dotenv").config();
 
 const passport = require("passport");
@@ -231,6 +236,29 @@ app.post("/favourites/edit", function (req, res) {
     collection.updateOne({_id: user_id}, {"$set": {favourites: new_favourites}}, {upsert:true});
     res.status(200).send("Woop");
   }
+});
+
+// CALENDAR/TWILIO things
+
+const params = {
+  calendarID: "jist1h5klvj0181h8qan2gmrik@group.calendar.google.com"
+};
+
+// async function main(params) {
+//   const res = await blogger.blogs.get({blogId: params.blogId});
+//   console.log(`${res.data.name} has ${res.data.posts.totalItems} posts! The blog url is ${res.data.url}`)
+// };
+
+// main().catch(console.error);
+
+
+app.get("/events/list", async function(req, res) {
+  // need to get a list of events
+  // but i think i'm gonna get nae-naed
+
+  events_json = await calendar.calendars.get({calendarId: params.calendarID});
+  console.log(events_json);
+
 });
 
 // return a list of people the user knows!
