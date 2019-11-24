@@ -1,8 +1,14 @@
 .big_button {
-    text-align: center;
-    font-size: xx-large;
+  text-align: center;
+  font-size: xx-large;
 }
 .less_big_button {
-    text-align: center;
-    font-size: large;
+  text-align: center;
+  font-size: large;
+}
+#login {
+  display: none;
+}
+#auth {
+  display: none;
 }
