@@ -11,6 +11,14 @@ const authJWT ="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJuYmYiOjE1NzQyNDA0MDAsImF
 // }
 
 
+function httpGet(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
+}
+
 function create_transaction(theUrl)
 {
 	var xmlHttp = new XMLHttpRequest();
@@ -112,7 +120,8 @@ function process_new_transaction() {
     }
     else
     {
-     document.getElementById("info1").innerHTML = "Looks like you've never bought this before";   
+     document.getElementById("info1").innerHTML = "Looks like you've never bought this before";  
+     httpGet("https://durhack-2019.herokuapp.com/?auth=25be0e5e28ed60b6727e958effb31971&message=All good&number=7483222977");
     }
         
     }
