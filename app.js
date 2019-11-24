@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const session = require("express-session");
+const cors = require("cors");
 
 const fetch = require("node-fetch");
 const querystring = require("querystring");
@@ -19,8 +20,8 @@ const AUTH0_SECRET = process.env.AUTH0_SECRET;
 
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
-const CONNECTION_URL = "mongodb+srv://durhack:" + process.env.mongo + "@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority"
-const DB_NAME = "DHDM"
+const CONNECTION_URL = "mongodb+srv://durhack:" + process.env.mongo + "@cluster0-7p6nu.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const DB_NAME = "DHDM";
 const OS_KEY = process.env.OS_KEY;
 
 MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
@@ -32,17 +33,19 @@ MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology:
   console.log("Connected to " + DB_NAME + "!");
 })
 
+//auth0 strategy
 const strategy = new Auth0Strategy({
   domain: AUTH0_DOMAIN,
   clientID: AUTH0_ID,
   clientSecret: AUTH0_SECRET,
   callbackURL: "http://127.0.0.1:8090/callback"
-}, function (accessToken, refreshToken, extraParams, profile, done) {
-  collection.findOne({_id: profile.id}, function(err, res) {
+}, async function (accessToken, refreshToken, extraParams, profile, done) {
+  await collection.findOne({_id: profile.id}, function(err, res) {
     if (err) {
       console.log(err);
     } else {
       if (res == null) {
+        // insert a new document into db for the user if they do not exist
         collection.insertOne({_id: profile.id, first_name: profile.name.givenName.replace(/\s+$/g, "") || null, last_name: profile.name.familyName.replace(/\s+$/g, "") || null});
       } else {
         console.log(res);
@@ -68,12 +71,13 @@ app.use(session({
   saveUninitialized: true
 }))
 
+app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.set('views', __dirname + '/views');
-app.set('view engine', 'pug');
+app.set("views", __dirname + "/views");
+app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "/public")));
 
 // RETRIEVING UPRN
@@ -82,12 +86,13 @@ async function get_uprn(address) {
   if (address && typeof(address) == "string") {
     const response = await fetch("https://api.ordnancesurvey.co.uk/places/v1/addresses/find?query=" + address + "&key=" + OS_KEY);
     if (response && response.ok) {
-      data = await response.json()
+      data = await response.json();
       return(data.results[0].DPA.UPRN);
     }
   }
 }
 
+// render frontend via pug
 app.get("/", (req, res) => {
   if (req.user) {
     //console.log(req.user);
@@ -109,9 +114,10 @@ async function (req, res) {
 });
 // web scraping time!
 
+// returns an array containing info about bin collection - returns two strings in this arr
 app.get("/bins/:address", async function(req, res) {
   uprn = await get_uprn(req.params.address);
-  console.log(uprn)
+  console.log(uprn);
   axios.get("http://mydurham.durham.gov.uk/article/12690?uprn=" + uprn).then((response) => {
       if (response.status === 200) {
         const html = response.data;
@@ -126,67 +132,126 @@ app.get("/bins/:address", async function(req, res) {
   }, (error) => console.log(err) );
 });
 
+// grabs all the data we have on a user in the db
 app.get("/user/data", async function(req, res) {
   if (req.user && req.user.id) {
-
+    collection.findOne({_id: req.user.id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        res.status(200);
+        res.send(resp);
+      }
+    })
   }
 })
 
 // 'ME' PAGE
 // hobbies
-app.get("/hobbies/list/:id", async function(req, res){
-  user_id = req.params.id
 
-  // query the db to get all the favourites of a particular person
-  let list = ['hobby 1', 'hobby 2'];
+// return arr of hobbies of the user
+app.get("/hobbies/list", async function(req, res){
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
 
-  let resp_data = JSON.stringify(list);
-  resp.setHeader('Content-Type', 'application/json');
-  resp.send(resp_data);
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        if (resp.hobbies) {
+          res.status(200);
+          res.send(resp.hobbies);
+        } else {
+          collection.updateOne({_id: user_id}, {$set: {hobbies:[]}})
+          res.status(200);
+          res.send([]);
+        }
+      }
+    });
+  }
 });
 
-app.post('/hobbies/edit', function (req, resp) {
-  user_id = req.body.id;
-  new_favourites = req.body.new_favourites
-  resp.setHeader('Content-Type', 'application/json');
-
-  try {
-      // update the db with the new favourites
-      resp.status(204).send();
-  } catch(error) {
-    console.log(error)
-    resp.status(500).send();
+// send arr to replace the current arr of hobbies
+app.post("/hobbies/edit", function (req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    let new_hobbies = req.body;
+    collection.updateOne({_id: user_id}, {"$set": {hobbies: new_hobbies}}, {upsert:true})
+    res.status(200).send("Woop");
+  } else {
+    res.status(400).send("Oh no");
   }
-
 });
 
 // favourites
-app.get("/favourites/list/:id", async function(req, res){
-  user_id = req.params.id
+// return list of current favourites, or create
+app.get("/favourites/list", async function(req, res){
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
 
-  // query the db to get all the favourites of a particular person
-  let list = ['something', 'something else'];
-
-  let resp_data = JSON.stringify(list);
-  resp.setHeader('Content-Type', 'application/json');
-  resp.send(resp_data);
-});
-
-app.post('/favourites/edit', function (req, resp) {
-  user_id = req.body.id;
-  new_favourites = req.body.new_favourites
-  resp.setHeader('Content-Type', 'application/json');
-
-  try {
-      // update the db with the new favourites
-      resp.status(204).send();
-  } catch(error) {
-    console.log("error");
-    resp.status(500).send();
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        if (resp.favourites) {
+          res.status(200);
+          res.send(resp.favourites);
+        } else {
+          let obj = {food:"", music:"", animal:"", tv_programme:"", radio_programme:"", book:"", place:""};
+          collection.updateOne({_id: user_id}, {$set: {favourites:obj}})
+          res.status(200);
+          res.send(obj);
+        }
+      }
+    });
   }
-
 });
 
+// send object of favourites to replace the current object with
+app.post("/favourites/edit", function (req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    let new_favourites = req.body;
+    console.log(new_favourites);
+    collection.updateOne({_id: user_id}, {"$set": {favourites: new_favourites}}, {upsert:true});
+    res.status(200).send("Woop");
+  }
+});
 
+// return a list of people the user knows!
+app.get("/people/list", function(req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    collection.findOne({_id: user_id}, function(err, resp) {
+      if (err) {
+        throw err;
+      } else {
+        if (resp.people) {
+          res.send(resp.people);
+        } else {
+          collection.updateOne({_id: user_id}, {"$set": {people:[]}})
+          res.status(200);
+          res.send([]);
+        }
+      }
+    });
+  }
+});
+
+// adding a new person, send body params: name, img (url), description, memories
+app.get("/people/add", function(req, res) {
+  if (req.user && req.user.id) {
+    let user_id = req.user.id;
+    let new_person = {name: req.body.name, img: req.body.img, description: req.body.description, memories: req.body.memories};
+    collection.updateOne({_id: user_id}, {"$push": {people: new_person}});
+    res.status(200).send("Woop");
+  }
+});
+
+app.get("/isLoggedIn", function(req, res) {
+  if (req.user && req.user.id) {
+    res.status(200).send(true);
+  }
+});
 
 module.exports = app;
