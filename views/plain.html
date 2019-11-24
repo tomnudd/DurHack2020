@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-<script src="index.js"></script>
-<script src="me.js"></script>
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" href="cursed.css">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="index.js"></script>
+  <script src="me.js"></script>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="cursed.css">
 </head>
+
 <body>
   <h1 id="intro">Welcome to our amazing(ish) DurHack project!</h1>
   <div ng-app="myApp" ng-controller="myCtrl">
@@ -44,7 +46,8 @@
               <h2>My hobbies</h2>
             </div>
             <div class="col-3">
-              <div id="editHobbies" class="less_big_button" style="align-self: flex-end; background-color: palevioletred;">Edit</div>
+              <div id="editHobbies" class="less_big_button"
+                style="align-self: flex-end; background-color: palevioletred;">Edit</div>
             </div>
           </div>
         </div>
@@ -107,7 +110,12 @@
     </div>
 
     <div id="myPeople" ng-show="visibilities.myPeople">
-      people
+      <div id='person-txt'>
+
+      </div>
+      <div id="addPersonButton" class="less_big_button" style="align-self: flex-end; background-color: palevioletred;">Add a new person
+      </div>
+      <div id='add-person-txt'></div>
     </div>
 
     <div id="myMoney" ng-show="visibilities.myMoney">
@@ -118,4 +126,5 @@
   <input id="lgout" type="submit" value="Logout" onclick="window.location='/logout';" />
 
 </body>
+
 </html>
