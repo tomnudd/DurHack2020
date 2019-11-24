@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const session = require("express-session");
+const cors = require("cors");
 
 const fetch = require("node-fetch");
 const querystring = require("querystring");
@@ -68,6 +69,7 @@ app.use(session({
   saveUninitialized: true
 }))
 
+app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -198,6 +200,7 @@ app.post("/favourites/edit", function (req, res) {
   if (req.user && req.user.id) {
     let user_id = req.user.id;
     let new_favourites = req.body.new_favourites;
+    console.log(new_favourites);
     collection.updateOne({_id: user_id}, {$set: {favourites: new_favourites}}, {upsert:true});
   }
 });
