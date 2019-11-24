@@ -259,12 +259,13 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('person-txt').innerHTML = '<ul>';
 
             let people = JSON.parse(body);
+            console.log(people)
             for (person in people) {
-                document.getElementById("person-txt").innerHTML += "<h2>" + person.name + "</h2>"
+                document.getElementById("person-txt").innerHTML += "<h2>" + people[person].name + "</h2>"
                 document.getElementById("person-txt").innerHTML += "<div class='container'>"
-                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Image</div><div class='col-4'><img src='" + person.image + "'></div></div>";
-                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Description</div><div class='col-4'>" + arrayToHTML(person.description) + "</div></div>";
-                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Memories</div><div class='col-4'>" + arrayToHTML(person.memories) + "</div></div>";
+                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'></div><div class='col-4'><img src='" + people[person].img + "'></div></div>";
+                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Description</div><div class='col-4'>" + arrayToHTML(people[person].description) + "</div></div>";
+                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Memories</div><div class='col-4'>" + arrayToHTML(people[person].memories) + "</div></div>";
 
                 document.getElementById("add-person-txt").innerHTML += "</div>";
             }
@@ -280,12 +281,13 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log(addPersonButton);
     addPersonButton.addEventListener('click', async function () {
         if (addPersonButton.innerText != 'Add a new person') {
-
+          console.log('sending data pls');
             let name = document.getElementById("name-input").value;
             let image = document.getElementById("img-input").value;
 
             // remove blank lines from desc and memories and store as array
             let desc = document.getElementById("desc-input").value;
+            console.log(desc);
             var temp = desc.split("\n");
 
             // remove blank lines
@@ -320,24 +322,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
             addPersonButton.innerText = 'Add a new person';
+            document.getElementById("add-person-txt").innerHTML ="";
+
 
             document.getElementById("person-txt").innerHTML += "<h2>" + name + "</h2>"
                 document.getElementById("person-txt").innerHTML += "<div class='container'>"
-                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Image</div><div class='col-4'><img src='" + image + "'></div></div>";
+                document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'></div><div class='col-4'><img src='" + image + "'></div></div>";
                 document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Description</div><div class='col-4'>" + arrayToHTML(desc) + "</div></div>";
                 document.getElementById("person-txt").innerHTML += "<div class='row'><div class='col-4'>Memories</div><div class='col-4'>" + arrayToHTML(memories) + "</div></div>";
 
                 document.getElementById("add-person-txt").innerHTML += "</div>";
         } else {
             // go into edit mode
-            console.log('adding person');
+            console.log('going to add a person');
             addPersonButton.innerText = 'Go!';
 
             document.getElementById("add-person-txt").innerHTML = "<div class='container'>"
             document.getElementById("add-person-txt").innerHTML += "<div class='row'><div class='col-4'>Name</div><div class='col-4'><input id='name-input' type='text'></div></div>";
             document.getElementById("add-person-txt").innerHTML += "<div class='row'><div class='col-4'>Image</div><div class='col-4'><input id='img-input' type='text'></div></div>";
-            document.getElementById("add-person-txt").innerHTML += "<div class='row'><div class='col-4'>Description</div><div class='col-4'><textarea id='desc-input' autofocus rows=\'5\' cols=\'45\'></textarea></div></div>";
-            document.getElementById("add-person-txt").innerHTML += "<div class='row'><div class='col-4'>Memories</div><div class='col-4'><textarea id='memories-input' autofocus rows=\'5\' cols=\'45\'></textarea></div></div>";
+            document.getElementById("add-person-txt").innerHTML += "<div class='row'><div class='col-4'>Description</div><div class='col-4'><textarea id='desc-input' rows=\'5\' cols=\'45\'></textarea></div></div>";
+            document.getElementById("add-person-txt").innerHTML += "<div class='row'><div class='col-4'>Memories</div><div class='col-4'><textarea id='memories-input' rows=\'5\' cols=\'45\'></textarea></div></div>";
 
             document.getElementById("add-person-txt").innerHTML += "</div>";
 
@@ -349,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function arrayToHTML(arr) {
     out = "<ul>"
     for (elem in arr) {
-        out += "<li>" + elem + "</li>";
+        out += "<li>" + arr[elem] + "</li>";
     }
     out += "</ul>"
 

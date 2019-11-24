@@ -236,7 +236,6 @@ app.post("/favourites/edit", function (req, res) {
 app.post("/people/new", function(req, res) {
   if (req.user) {
     let user_id = req.user.id;
-    console.log(req.body)
     let new_person = req.body;
     collection.updateOne({_id: user_id}, {"$push": {people: new_person}});
     res.status(200).send("Woop");
