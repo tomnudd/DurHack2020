@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let response = await fetch('http://127.0.0.1:8090/address');
             let address = await response.text();
             document.getElementById('address-txt').innerHTML = '<p>' + address + '</p>';
+
         } catch (error) {
             document.getElementById('address-txt').innerHTML = 'An error occurred! Please try again later.';
         }
